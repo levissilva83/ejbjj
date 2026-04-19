@@ -1216,8 +1216,8 @@
             width: 12px; height: 12px; border-radius: 50%; border: 2px solid;
         }
         .evo-tl-event.inicio::before { border-color: #22C55E; background: rgba(46,204,113,0.2); }
-        .evo-tl-event.grau::before { border-color: #fbbf24; background: rgba(251,191,36,0.2); }
-        .evo-tl-event.faixa::before { border-color: #8b5cf6; background: rgba(139,92,246,0.2); }
+        .evo-tl-event.grau::before  { border-color: var(--bullet-color, #fbbf24); background: color-mix(in srgb, var(--bullet-color, #fbbf24) 20%, transparent); }
+        .evo-tl-event.faixa::before { border-color: var(--bullet-color, #8b5cf6); background: color-mix(in srgb, var(--bullet-color, #8b5cf6) 20%, transparent); }
         .evo-tl-event .evo-tl-icon { font-size: 20px; float: right; }
         .evo-tl-event .evo-tl-title { font-weight: 700; font-size: 13px; color: var(--text-1); }
         .evo-tl-event .evo-tl-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
@@ -5961,11 +5961,11 @@
                                 <div class="evo-inicio-label">📅 Quando você começou a treinar?</div>
                                 <div class="evo-inicio-row">
                                     <input type="date" id="evoInicioDate" class="evo-inicio-input">
-                                    <button class="evo-inicio-btn" id="evoInicioBtn" onclick="saveMyInicioTreino()">Salvar</button>
+                                    <button class="evo-inicio-btn" id="evoInicioBtn" onclick="saveMyInicioBJJ()">Salvar</button>
                                 </div>
                                 <div class="evo-inicio-saved" id="evoInicioSaved" style="display:none;">
                                     ✅ <span id="evoInicioSavedText"></span>
-                                    <span class="evo-inicio-edit" onclick="editInicioTreino()">editar</span>
+                                    <span class="evo-inicio-edit" onclick="editInicioBJJ()">editar</span>
                                 </div>
                             </div>
 
@@ -5976,36 +5976,56 @@
                                     <span class="evo-declare-toggle" id="evoDeclareToggle">▸</span>
                                 </div>
                                 <div class="evo-declare-form" id="evoDeclareForm" style="display:none;">
-                                    <div class="evo-declare-hint">Informe seu histórico. O professor irá validar.</div>
-                                    <div class="evo-declare-row">
-                                        <select id="evoDeclTipo" onchange="onEvoDeclTipoChange()">
-                                            <option value="grau">🏅 Grau</option>
-                                            <option value="faixa">🥋 Faixa</option>
-                                        </select>
-                                        <select id="evoDeclFaixa" onchange="updateGrauOptions('evoDeclFaixa','evoDeclGrau')">
-                                            <option value="Branca">Branca</option>
-                                            <option value="Cinza">Cinza</option>
-                                            <option value="Amarela">Amarela</option>
-                                            <option value="Laranja">Laranja</option>
-                                            <option value="Verde">Verde</option>
-                                            <option value="Azul">Azul</option>
-                                            <option value="Roxa">Roxa</option>
-                                            <option value="Marrom">Marrom</option>
-                                            <option value="Preta">Preta</option>
-                                        </select>
-                                        <select id="evoDeclGrau">
-                                            <option value="0">0º Grau</option>
-                                            <option value="1">1º Grau</option>
-                                            <option value="2">2º Grau</option>
-                                            <option value="3">3º Grau</option>
-                                            <option value="4">4º Grau</option>
-                                        </select>
+
+                                    <!-- Passo 1: Sim ou Não -->
+                                    <div id="evoDeclStepNao" style="display:block;">
+                                        <div class="evo-declare-hint">Se nunca treinou antes, sua faixa é Branca e será registrada automaticamente.</div>
+                                        <div class="evo-declare-row" style="gap:10px;margin-top:8px;">
+                                            <button class="evo-declare-btn" style="flex:1;background:rgba(34,197,94,0.15);color:#22C55E;border:1px solid rgba(34,197,94,0.3);" onclick="confirmarFaixaBranca()">
+                                                ⬜ Não, sou Faixa Branca
+                                            </button>
+                                            <button class="evo-declare-btn" style="flex:1;" onclick="mostrarFormDeclare()">
+                                                🥋 Sim, tenho histórico
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="evo-declare-row">
-                                        <input type="date" id="evoDeclData" class="evo-inicio-input" style="flex:1;">
-                                        <button class="evo-declare-btn" onclick="requestGraduacao()">Enviar</button>
+
+                                    <!-- Passo 2: formulário de histórico (Sim) -->
+                                    <div id="evoDeclStepSim" style="display:none;">
+                                        <div class="evo-declare-hint">Informe seu histórico. O professor irá validar.</div>
+                                        <div class="evo-declare-row">
+                                            <select id="evoDeclTipo" onchange="onEvoDeclTipoChange()">
+                                                <option value="faixa">🥋 Faixa</option>
+                                                <option value="grau">🏅 Grau na faixa</option>
+                                            </select>
+                                            <select id="evoDeclFaixa" onchange="updateGrauOptions('evoDeclFaixa','evoDeclGrau')">
+                                                <option value="Azul">Azul</option>
+                                                <option value="Roxa">Roxa</option>
+                                                <option value="Marrom">Marrom</option>
+                                                <option value="Preta">Preta</option>
+                                                <option value="Cinza">Cinza</option>
+                                                <option value="Amarela">Amarela</option>
+                                                <option value="Laranja">Laranja</option>
+                                                <option value="Verde">Verde</option>
+                                                <option value="Branca">Branca c/ Grau</option>
+                                            </select>
+                                            <select id="evoDeclGrau" style="display:none;">
+                                                <option value="1">1º Grau</option>
+                                                <option value="2">2º Grau</option>
+                                                <option value="3">3º Grau</option>
+                                                <option value="4">4º Grau</option>
+                                            </select>
+                                        </div>
+                                        <div class="evo-declare-row">
+                                            <input type="date" id="evoDeclData" class="evo-inicio-input" style="flex:1;">
+                                            <button class="evo-declare-btn" onclick="requestGraduacao()">Enviar</button>
+                                        </div>
+                                        <div style="margin-top:6px;">
+                                            <span style="font-size:11px;color:var(--text-3);cursor:pointer;text-decoration:underline;" onclick="voltarParaNaoSim()">← Voltar</span>
+                                        </div>
+                                        <div id="evoDeclMsg" style="font-size:11px;color:var(--text-3);margin-top:4px;"></div>
                                     </div>
-                                    <div id="evoDeclMsg" style="font-size:11px;color:var(--text-3);margin-top:4px;"></div>
+
                                 </div>
                             </div>
 
@@ -8277,43 +8297,8 @@
                 <!-- Graduation Timeline -->
                 <div class="stu-section">
                     <div class="stu-section-title">🏆 Linha do Tempo · Graduação</div>
-                    <div class="grad-add-form" id="gradAddForm">
-                        <select id="gradTipo" onchange="onGradTipoChange()">
-                            <option value="grau">🟡 Grau na faixa</option>
-                            <option value="faixa">🟣 Graduação de faixa</option>
-                        </select>
-                        <select id="gradFaixa" onchange="updateGrauOptions('gradFaixa','gradGrau')">
-                            <optgroup label="🥋 Adultos">
-                                <option value="Branca">⚪ Branca</option>
-                                <option value="Azul">🔵 Azul</option>
-                                <option value="Roxa">🟣 Roxa</option>
-                                <option value="Marrom">🟤 Marrom</option>
-                                <option value="Preta">⚫ Preta</option>
-                            </optgroup>
-                            <optgroup label="🧒 Kids">
-                                <option value="Cinza-Branca">⬜ Cinza-Branca</option>
-                                <option value="Cinza">🩶 Cinza</option>
-                                <option value="Cinza-Preta">🖤 Cinza-Preta</option>
-                                <option value="Amarela-Branca">⬜ Amarela-Branca</option>
-                                <option value="Amarela">🟡 Amarela</option>
-                                <option value="Amarela-Preta">🖤 Amarela-Preta</option>
-                                <option value="Laranja-Branca">⬜ Laranja-Branca</option>
-                                <option value="Laranja">🟠 Laranja</option>
-                                <option value="Laranja-Preta">🖤 Laranja-Preta</option>
-                                <option value="Verde-Branca">⬜ Verde-Branca</option>
-                                <option value="Verde">🟢 Verde</option>
-                                <option value="Verde-Preta">🖤 Verde-Preta</option>
-                            </optgroup>
-                        </select>
-                        <select id="gradGrau">
-                            <option value="0">0º Grau</option>
-                            <option value="1">1º Grau</option>
-                            <option value="2">2º Grau</option>
-                            <option value="3">3º Grau</option>
-                            <option value="4">4º Grau</option>
-                        </select>
-                        <input type="text" id="gradObs" placeholder="Obs (opcional)" style="min-width:100px;">
-                        <button class="grad-add-btn" onclick="addGraduacao()">✅ Aprovar</button>
+                    <div style="font-size:11px;color:var(--text-3);margin-bottom:8px;padding:6px 10px;background:rgba(255,255,255,0.04);border-radius:8px;">
+                        ℹ️ O aluno declarou as datas abaixo. Confirme se as datas registradas estão corretas.
                     </div>
                     <div id="gradTimeline" class="grad-timeline">
                         <div class="grad-empty">Nenhum evento registrado</div>
@@ -8442,7 +8427,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxWfChzypcDk8UIi0-gmD7S9_gc0slc8D_WK6JURUOxv--vWeKa1hA1P24wgSOfIAWwkA/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyr6iq8GSFg0suPQZ0jjV_2eAhAbvIkKmhuA2m9eSUCQIj3HdObcjuCk9AXXhW0tfoapA/exec';
 
         // ===== PWA INSTALL PROMPT =====
         (function() {
@@ -10845,37 +10830,26 @@
         }
 
         // Admin: approve graduation event (direct or pending)
+        // addGraduacao: professor NÃO cria eventos — só aprova pelo rowIndex
         async function addGraduacao() {
-            if (!stuModalEmail) return;
-            var tipo = document.getElementById('gradTipo').value;
-
-            var payload = {
-                alunoEmail: stuModalEmail,
-                tipo: tipo,
-                faixa: document.getElementById('gradFaixa').value,
-                grau: document.getElementById('gradGrau').value,
-                obs: document.getElementById('gradObs').value.trim()
-            };
-
-            try {
-                var result = await secureFetch('addGraduacao', payload);
-                if (result.success) {
-                    document.getElementById('gradObs').value = '';
-                    loadGraduacoes(stuModalEmail);
-                } else {
-                    alert(result.message || 'Erro');
-                }
-            } catch(e) { alert('Erro de conexão'); }
+            console.warn('addGraduacao() sem rowIndex ignorado — use approveGraduacaoRow(rowIndex)');
         }
 
-        // Admin: approve a pending event by rowIndex
+        // Admin: aprova evento PENDENTE pelo rowIndex — preserva data informada pelo aluno
         async function approveGraduacaoRow(rowIndex) {
             try {
                 var result = await secureFetch('addGraduacao', { rowIndex: rowIndex });
                 if (result.success) {
+                    (function() {
+                        var t = document.createElement('div');
+                        t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#16A34A;color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:700;z-index:10000;box-shadow:0 4px 20px rgba(0,0,0,.4);';
+                        t.textContent = '✅ Data confirmada! Jornada do aluno atualizada.';
+                        document.body.appendChild(t);
+                        setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 3000);
+                    })();
                     loadGraduacoes(stuModalEmail);
                 } else {
-                    alert(result.message || 'Erro');
+                    alert(result.message || 'Erro ao aprovar');
                 }
             } catch(e) { alert('Erro de conexão'); }
         }
@@ -10937,18 +10911,18 @@
                 }
 
                 var statusBadge = isPending 
-                    ? '<span class="grad-status pendente">⏳ PENDENTE</span>'
-                    : '<span class="grad-status aprovado">✅ APROVADO</span>';
+                    ? '<span class="grad-status pendente">📅 AGUARD. CONFIRMAÇÃO</span>'
+                    : '<span class="grad-status aprovado">✅ DATA CONFIRMADA</span>';
 
                 html += '<div class="' + cls + '">';
-                html += '<div class="grad-date">' + formatGradDate(ev.data) + ' ' + statusBadge + '</div>';
+                var dataLabel = ev.data ? '📅 ' + formatGradDate(ev.data) + ' <span style="font-size:10px;color:var(--text-3)">(declarada pelo aluno)</span>' : '📅 —';
+                html += '<div class="grad-date">' + dataLabel + ' ' + statusBadge + '</div>';
                 html += '<div class="grad-title">' + icon + ' ' + title + '</div>';
                 if (ev.obs) html += '<div class="grad-obs">"' + escapeHtml(ev.obs) + '"</div>';
-                
+
                 if (isPending && ev.rowIndex) {
                     html += '<div class="grad-actions">';
-                    html += '<button class="grad-action-btn approve" onclick="approveGraduacaoRow(' + ev.rowIndex + ')">✅ Aprovar</button>';
-                    html += '<button class="grad-action-btn reject" onclick="rejectGraduacaoRow(' + ev.rowIndex + ')">✕ Rejeitar</button>';
+                    html += '<button class="grad-action-btn approve" onclick="approveGraduacaoRow(' + ev.rowIndex + ')">✅ Confirmar data declarada</button>';
                     html += '</div>';
                 }
                 html += '</div>';
@@ -10973,39 +10947,91 @@
         // ===== STUDENT GRADUATION TIMELINE =====
 
         function toggleDeclareForm() {
-            var form = document.getElementById('evoDeclareForm');
+            var form   = document.getElementById('evoDeclareForm');
             var toggle = document.getElementById('evoDeclareToggle');
             if (!form) return;
             var open = form.style.display !== 'none';
-            form.style.display = open ? 'none' : 'block';
-            if (toggle) toggle.classList.toggle('open', !open);
+            if (!open) {
+                form.style.display = 'block';
+                voltarParaNaoSim();
+            } else {
+                form.style.display = 'none';
+            }
+            if (toggle) toggle.classList.toggle('open', form.style.display !== 'none');
+        }
+
+        function mostrarFormDeclare() {
+            document.getElementById('evoDeclStepNao').style.display = 'none';
+            document.getElementById('evoDeclStepSim').style.display = 'block';
+            onEvoDeclTipoChange();
+        }
+
+        function voltarParaNaoSim() {
+            document.getElementById('evoDeclStepNao').style.display = 'block';
+            document.getElementById('evoDeclStepSim').style.display = 'none';
+            var msg = document.getElementById('evoDeclMsg');
+            if (msg) msg.textContent = '';
+        }
+
+        async function confirmarFaixaBranca() {
+            var btn = document.querySelector('#evoDeclStepNao .evo-declare-btn');
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Registrando...'; }
+            try {
+                var inicioInput = document.getElementById('evoInicioDate');
+                var dataInicio  = (inicioInput && inicioInput.value) ? inicioInput.value : new Date().toISOString().split('T')[0];
+                var result = await secureFetch('setMyInicioBJJ', { data: dataInicio });
+                if (result.success) {
+                    document.getElementById('evoDeclareForm').style.display = 'none';
+                    var toggle = document.getElementById('evoDeclareToggle');
+                    if (toggle) toggle.classList.remove('open');
+                    loadMyGraduacoes();
+                    var box = document.getElementById('evoDeclareBox');
+                    if (box) { box.style.border = '1px solid rgba(34,197,94,0.4)'; setTimeout(function(){ box.style.border = ''; }, 2000); }
+                } else {
+                    alert(result.message || 'Erro ao registrar');
+                    if (btn) { btn.disabled = false; btn.textContent = '⬜ Não, sou Faixa Branca'; }
+                }
+            } catch(e) {
+                alert('Erro de conexão');
+                if (btn) { btn.disabled = false; btn.textContent = '⬜ Não, sou Faixa Branca'; }
+            }
         }
 
         function onEvoDeclTipoChange() {
-            var tipo = document.getElementById('evoDeclTipo').value;
-            document.getElementById('evoDeclGrau').style.display = (tipo === 'grau') ? '' : 'none';
+            var tipo  = document.getElementById('evoDeclTipo').value;
+            var grau  = document.getElementById('evoDeclGrau');
+            var faixa = document.getElementById('evoDeclFaixa');
+            if (!grau || !faixa) return;
+            grau.style.display = (tipo === 'grau') ? '' : 'none';
+            if (tipo === 'faixa') {
+                for (var i = 0; i < faixa.options.length; i++) {
+                    if (faixa.options[i].value === 'Branca') {
+                        faixa.options[i].style.display = 'none';
+                        if (faixa.value === 'Branca') faixa.value = 'Azul';
+                    }
+                }
+            } else {
+                for (var j = 0; j < faixa.options.length; j++) { faixa.options[j].style.display = ''; }
+            }
         }
 
         async function requestGraduacao() {
-            var tipo = document.getElementById('evoDeclTipo').value;
-            var data = document.getElementById('evoDeclData').value;
-            if (!data) { alert('Informe a data'); return; }
-
-            var payload = {
-                tipo: tipo,
-                faixa: document.getElementById('evoDeclFaixa').value,
-                grau: document.getElementById('evoDeclGrau').value,
-                data: data,
-                obs: ''
-            };
-
-            var msg = document.getElementById('evoDeclMsg');
-            if (msg) msg.textContent = 'Enviando...';
-
+            var tipo  = document.getElementById('evoDeclTipo').value;
+            var data  = document.getElementById('evoDeclData').value;
+            var faixa = document.getElementById('evoDeclFaixa').value;
+            var grau  = document.getElementById('evoDeclGrau').value;
+            var msg   = document.getElementById('evoDeclMsg');
+            if (!data) data = new Date().toISOString().split('T')[0];
+            if (tipo === 'faixa' && faixa === 'Branca') {
+                if (msg) { msg.style.color = 'var(--coral)'; msg.textContent = 'Para Faixa Branca use o botão "Não, sou Faixa Branca"'; }
+                return;
+            }
+            var payload = { tipo: tipo, faixa: faixa, grau: grau, data: data, obs: '' };
+            if (msg) { msg.style.color = 'var(--text-3)'; msg.textContent = 'Enviando...'; }
             try {
                 var result = await secureFetch('requestGraduacao', payload);
                 if (result.success) {
-                    if (msg) { msg.style.color = '#22C55E'; msg.textContent = '✅ Solicitação enviada! Aguarde aprovação.'; }
+                    if (msg) { msg.style.color = '#22C55E'; msg.textContent = '✅ Data registrada! O professor irá confirmar na jornada.'; }
                     document.getElementById('evoDeclData').value = '';
                     loadMyGraduacoes();
                 } else {
@@ -11122,61 +11148,80 @@
         }
 
         function renderEvoTimeline(container, events) {
-            var FAIXA_EMOJI = {
-                'Branca':'⬜','Cinza':'🩶','Amarela':'🟨','Laranja':'🟧',
-                'Verde':'🟩','Azul':'🟦','Roxa':'🟪','Marrom':'🟫','Preta':'⬛'
+            var FAIXA_ICON = {
+                'Branca':'⬜','Cinza':'🩶','Cinza-Branca':'🩶','Cinza-Preta':'🩶',
+                'Amarela':'🟨','Amarela-Branca':'🟨','Amarela-Preta':'🟨',
+                'Laranja':'🟧','Laranja-Branca':'🟧','Laranja-Preta':'🟧',
+                'Verde':'🟩','Verde-Branca':'🟩','Verde-Preta':'🟩',
+                'Azul':'🟦','Roxa':'🟪','Marrom':'🟫','Preta':'⬛'
+            };
+            var FAIXA_COR = {
+                'Branca':'#e5e7eb',
+                'Cinza':'#9ca3af','Cinza-Branca':'#9ca3af','Cinza-Preta':'#9ca3af',
+                'Amarela':'#fbbf24','Amarela-Branca':'#fbbf24','Amarela-Preta':'#fbbf24',
+                'Laranja':'#f97316','Laranja-Branca':'#f97316','Laranja-Preta':'#f97316',
+                'Verde':'#22c55e','Verde-Branca':'#22c55e','Verde-Preta':'#22c55e',
+                'Azul':'#3b82f6','Roxa':'#8b5cf6','Marrom':'#92400e','Preta':'#111827'
             };
             var MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+            function formatEvDate(dataStr) {
+                if (!dataStr) return '';
+                var dp = dataStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                var d, m, y;
+                if (dp) { d=parseInt(dp[1]); m=parseInt(dp[2])-1; y=parseInt(dp[3]); }
+                else { var dp2=dataStr.split('-'); if(dp2.length>=3){y=parseInt(dp2[0]);m=parseInt(dp2[1])-1;d=parseInt(dp2[2]);} }
+                if (!d || m===undefined || !y) return dataStr;
+                var label = d + ' de ' + MESES[m] + ' de ' + y;
+                var evDate = new Date(y, m, d);
+                var now = new Date();
+                var diffDays = Math.floor((now - evDate) / (1000*60*60*24));
+                if (diffDays < 0) return label + ' · (futuro)';
+                if (diffDays === 0) return label + ' · hoje';
+                if (diffDays < 30) return label + ' · há ' + diffDays + ' dia' + (diffDays>1?'s':'');
+                if (diffDays < 365) { var meses=Math.floor(diffDays/30); return label + ' · há ' + meses + ' ' + (meses===1?'mês':'meses'); }
+                var anos = Math.floor(diffDays/365);
+                return label + ' · há ' + anos + ' ano' + (anos>1?'(s)':'');
+            }
 
             var html = '';
             for (var i = 0; i < events.length; i++) {
                 var ev = events[i];
                 var isPending = (ev.status === 'PENDENTE');
-                var title = '', sub = '', icon = '';
+                var faixa = ev.faixa || 'Branca';
+                var title = '', sub = '', icon = '', bulletColor = '';
+                var cardClass = 'evo-tl-event ' + ev.tipo + (isPending ? ' pendente' : '');
 
-                if (ev.tipo === 'inicio') {
-                    title = 'Início da Jornada'; sub = 'Primeiro dia no '; icon = '🥋';
+                if (ev.tipo === 'faixa') {
+                    icon = FAIXA_ICON[faixa] || '🥋';
+                    bulletColor = FAIXA_COR[faixa] || '#8b5cf6';
+                    title = 'Faixa ' + faixa;
+                    sub = isPending ? 'Data registrada · Aguardando confirmação do professor' : 'Promovido à faixa ' + faixa;
                 } else if (ev.tipo === 'grau') {
-                    title = ev.grau + 'º Grau · ' + ev.faixa;
-                    sub = isPending ? 'Aguardando aprovação do professor' : 'Grau recebido na faixa ' + ev.faixa;
-                    icon = '🏅';
-                } else if (ev.tipo === 'faixa') {
-                    title = 'Faixa ' + ev.faixa;
-                    sub = isPending ? 'Aguardando aprovação do professor' : 'Promovido à faixa ' + ev.faixa;
-                    icon = (FAIXA_EMOJI[ev.faixa] || '🥋');
+                    var grauNum = parseInt(ev.grau) || 0;
+                    var dots = '';
+                    for (var g=0;g<grauNum;g++) dots+='●';
+                    for (var g2=grauNum;g2<4;g2++) dots+='○';
+                    icon = '<span style="font-size:12px;letter-spacing:1px;">' + dots + '</span>';
+                    bulletColor = FAIXA_COR[faixa] || '#fbbf24';
+                    title = grauNum + 'º Grau · Faixa ' + faixa;
+                    sub = isPending ? 'Data registrada · Aguardando confirmação do professor' : 'Grau recebido na faixa ' + faixa;
+                } else if (ev.tipo === 'inicio') {
+                    icon = '🥋'; bulletColor = '#22C55E';
+                    title = 'Início da Jornada'; sub = 'Primeiro dia treinando BJJ';
                 }
 
-                var dateStr = '';
-                var dp = (ev.data || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-                var d, m, y;
-                if (dp) {
-                    d = parseInt(dp[1]); m = parseInt(dp[2]) - 1; y = parseInt(dp[3]);
-                } else {
-                    var dp2 = (ev.data || '').split('-');
-                    if (dp2.length >= 3) { y = parseInt(dp2[0]); m = parseInt(dp2[1]) - 1; d = parseInt(dp2[2]); }
-                }
-                if (d && m !== undefined && y) {
-                    dateStr = d + ' de ' + MESES[m] + ' de ' + y;
-                    var evDate = new Date(y, m, d);
-                    var now = new Date();
-                    var diffDays = Math.floor((now - evDate) / (1000*60*60*24));
-                    if (diffDays >= 0) {
-                        if (diffDays < 30) dateStr += ' · há ' + diffDays + ' dias';
-                        else if (diffDays < 365) dateStr += ' · há ' + Math.floor(diffDays/30) + ' meses';
-                        else dateStr += ' · há ' + Math.floor(diffDays/365) + ' ano(s)';
-                    }
-                }
+                var statusHtml = isPending
+                    ? '<div class="evo-tl-status pendente">📅 Aguardando confirmação</div>'
+                    : '<div class="evo-tl-status aprovado">✅ Data confirmada</div>';
+                var bulletStyle = bulletColor ? ' style="--bullet-color:' + bulletColor + ';"' : '';
 
-                var statusHtml = isPending 
-                    ? '<div class="evo-tl-status pendente">⏳ Aguardando aprovação</div>'
-                    : '<div class="evo-tl-status aprovado">✅ Aprovado</div>';
-
-                html += '<div class="evo-tl-event ' + ev.tipo + (isPending ? ' pendente' : '') + '">';
-                html += '<div class="evo-tl-icon">' + icon + '</div>';
-                html += '<div class="evo-tl-title">' + title + '</div>';
-                html += '<div class="evo-tl-sub">' + sub + '</div>';
-                html += '<div class="evo-tl-date">📅 ' + dateStr + '</div>';
-                if (ev.obs) html += '<div class="evo-tl-obs">"' + escapeHtml(ev.obs) + '"</div>';
+                html += '<div class="' + cardClass + '"' + bulletStyle + '>';
+                html += '  <div class="evo-tl-icon">' + icon + '</div>';
+                html += '  <div class="evo-tl-title">' + escapeHtml(title) + '</div>';
+                html += '  <div class="evo-tl-sub">' + escapeHtml(sub) + '</div>';
+                html += '  <div class="evo-tl-date">📅 ' + formatEvDate(ev.data) + '</div>';
+                if (ev.obs) html += '  <div class="evo-tl-obs">"' + escapeHtml(ev.obs) + '"</div>';
                 html += statusHtml;
                 html += '</div>';
             }
@@ -11296,15 +11341,65 @@
                 if (atrasado) h += '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#fca5a5;">⚠️ Mensalidade em atraso. Regularize para evitar suspensão.</div>';
 
                 if (temGateway) {
-                    // ── GATEWAY AUTOMÁTICO (MP ou InfinityPay): botão para gerar PIX dinâmico ──
-                    h += '<div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.6px;margin-bottom:12px;">PAGAR VIA PIX</div>';
-                    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">';
+                    // ── GATEWAY AUTOMÁTICO: seletor PIX / Cartão ──
+                    var isMercadoPago = (data.gateway === 'mercadopago');
+                    h += '<div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.6px;margin-bottom:10px;">FORMA DE PAGAMENTO</div>';
+                    // Valor
+                    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">';
                     h += '<div style="font-size:13px;color:var(--text-2);">Valor a pagar:</div>';
                     h += '<div style="font-size:22px;font-weight:800;color:#C9A23A;">R$ ' + parseFloat(plano.valor||0).toFixed(2) + '</div>';
                     h += '</div>';
+                    // Tabs PIX / Cartão
+                    if (isMercadoPago) {
+                        h += '<div style="display:flex;gap:8px;margin-bottom:14px;">';
+                        h += '<button id="tabBtnPixTab" onclick="alternarFormaPagTab(\'pix\')" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(201,162,58,0.6);background:rgba(201,162,58,0.15);color:#C9A23A;">🟢 PIX</button>';
+                        h += '<button id="tabBtnCartaoTab" onclick="alternarFormaPagTab(\'cartao\')" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text-3);">💳 Cartão</button>';
+                        h += '</div>';
+                    }
+                    // Painel PIX
+                    h += '<div id="painelPixTab">';
                     h += '<button id="btnGerarPixTab" onclick="gerarPixDinamicoTab()" style="width:100%;padding:14px;background:linear-gradient(135deg,#C9A23A,#F8E7A1 55%,#8C6A0A);color:#0D0B08;font-weight:800;border:none;border-radius:12px;font-size:14px;cursor:pointer;margin-bottom:10px;">🟢 Gerar QR Code PIX</button>';
                     h += '<div id="pixDinamicoContainerTab" style="margin-top:4px;"></div>';
                     h += '<div style="font-size:10px;color:var(--text-3);text-align:center;line-height:1.5;margin-top:8px;">' + (gwLabel[data.gateway] || data.gateway) + ' · Pagamento confirmado automaticamente</div>';
+                    h += '</div>';
+                    // Painel Cartão (MP only, oculto por default)
+                    if (isMercadoPago) {
+                        h += '<div id="painelCartaoTab" style="display:none;">';
+                        h += '<div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:14px;">';
+                        h += '<div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.5px;margin-bottom:12px;">💳 CADASTRAR CARTÃO — COBRANÇA RECORRENTE</div>';
+                        h += '<div style="font-size:11px;color:var(--text-2);margin-bottom:14px;line-height:1.5;background:rgba(201,162,58,0.06);border-radius:8px;padding:8px 10px;">Ao cadastrar, sua mensalidade será cobrada automaticamente todo mês no cartão.</div>';
+                        // Número
+                        h += '<div style="margin-bottom:10px;">';
+                        h += '<label style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;display:block;margin-bottom:4px;">NÚMERO DO CARTÃO</label>';
+                        h += '<input id="ccNumTab" type="tel" inputmode="numeric" maxlength="19" placeholder="0000 0000 0000 0000" oninput="formatarCartaoTab(this)" style="width:100%;padding:11px 12px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:10px;color:var(--text-1);font-size:15px;font-weight:700;letter-spacing:2px;">';
+                        h += '</div>';
+                        // Nome
+                        h += '<div style="margin-bottom:10px;">';
+                        h += '<label style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;display:block;margin-bottom:4px;">NOME (como no cartão)</label>';
+                        h += '<input id="ccNomeTab" type="text" placeholder="NOME SOBRENOME" style="width:100%;padding:11px 12px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;" oninput="this.value=this.value.toUpperCase()">';
+                        h += '</div>';
+                        // Validade + CVV
+                        h += '<div style="display:flex;gap:8px;margin-bottom:10px;">';
+                        h += '<div style="flex:1;">';
+                        h += '<label style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;display:block;margin-bottom:4px;">VALIDADE</label>';
+                        h += '<input id="ccValidTab" type="tel" inputmode="numeric" maxlength="5" placeholder="MM/AA" oninput="formatarValidadeTab(this)" style="width:100%;padding:11px 12px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;font-weight:700;">';
+                        h += '</div>';
+                        h += '<div style="flex:1;">';
+                        h += '<label style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;display:block;margin-bottom:4px;">CVV</label>';
+                        h += '<input id="ccCvvTab" type="tel" inputmode="numeric" maxlength="4" placeholder="000" style="width:100%;padding:11px 12px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;font-weight:700;">';
+                        h += '</div>';
+                        h += '</div>';
+                        // CPF
+                        h += '<div style="margin-bottom:14px;">';
+                        h += '<label style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;display:block;margin-bottom:4px;">CPF DO TITULAR</label>';
+                        h += '<input id="ccCpfTab" type="tel" inputmode="numeric" maxlength="14" placeholder="000.000.000-00" oninput="formatarCpfTab(this)" style="width:100%;padding:11px 12px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;">';
+                        h += '</div>';
+                        // Botão
+                        h += '<button id="btnSalvarCartaoTab" onclick="salvarCartaoMPTab()" style="width:100%;padding:14px;background:linear-gradient(135deg,#1a56db,#3b82f6);color:#fff;font-weight:800;border:none;border-radius:12px;font-size:14px;cursor:pointer;margin-bottom:6px;">💳 Ativar Cobrança Recorrente</button>';
+                        h += '<div id="cartaoMsgTab" style="font-size:11px;text-align:center;min-height:16px;margin-top:4px;"></div>';
+                        h += '</div>';
+                        h += '</div>';
+                    }
                 } else {
                     // ── PIX ESTÁTICO (chave manual) ──
                     h += '<div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.6px;margin-bottom:12px;">PAGAR VIA PIX</div>';
@@ -11390,6 +11485,82 @@
             } catch(e) {
                 if (btn) { btn.disabled = false; btn.textContent = '🟢 Gerar QR Code PIX'; }
                 alert('Erro de conexão. Tente novamente.');
+            }
+        }
+
+        // ── Alterna entre PIX e Cartão na aba de pagamentos ──────
+        function alternarFormaPagTab(tipo) {
+            var painelPix    = document.getElementById('painelPixTab');
+            var painelCartao = document.getElementById('painelCartaoTab');
+            var btnPix       = document.getElementById('tabBtnPixTab');
+            var btnCartao    = document.getElementById('tabBtnCartaoTab');
+            if (tipo === 'pix') {
+                if (painelPix)    painelPix.style.display    = '';
+                if (painelCartao) painelCartao.style.display = 'none';
+                if (btnPix)    { btnPix.style.background    = 'rgba(201,162,58,0.15)'; btnPix.style.borderColor    = 'rgba(201,162,58,0.6)'; btnPix.style.color    = '#C9A23A'; }
+                if (btnCartao) { btnCartao.style.background = 'transparent';           btnCartao.style.borderColor = 'var(--border)';         btnCartao.style.color = 'var(--text-3)'; }
+            } else {
+                if (painelPix)    painelPix.style.display    = 'none';
+                if (painelCartao) painelCartao.style.display = '';
+                if (btnCartao) { btnCartao.style.background = 'rgba(59,130,246,0.15)'; btnCartao.style.borderColor = 'rgba(59,130,246,0.6)'; btnCartao.style.color = '#60a5fa'; }
+                if (btnPix)    { btnPix.style.background    = 'transparent';            btnPix.style.borderColor    = 'var(--border)';          btnPix.style.color    = 'var(--text-3)'; }
+            }
+        }
+
+        // ── Formatadores do formulário de cartão ─────────────────
+        function formatarCartaoTab(input) {
+            var v = input.value.replace(/\D/g,'').slice(0,16);
+            input.value = v.replace(/(.{4})/g,'$1 ').trim();
+        }
+        function formatarValidadeTab(input) {
+            var v = input.value.replace(/\D/g,'').slice(0,4);
+            if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
+            input.value = v;
+        }
+        function formatarCpfTab(input) {
+            var v = input.value.replace(/\D/g,'').slice(0,11);
+            v = v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+            input.value = v;
+        }
+
+        // ── Salva cartão e ativa assinatura recorrente no MP ─────
+        async function salvarCartaoMPTab() {
+            var btn = document.getElementById('btnSalvarCartaoTab');
+            var msg = document.getElementById('cartaoMsgTab');
+            var numRaw    = (document.getElementById('ccNumTab')    ? document.getElementById('ccNumTab').value    : '').replace(/\s/g,'');
+            var nome      = (document.getElementById('ccNomeTab')   ? document.getElementById('ccNomeTab').value   : '').trim().toUpperCase();
+            var validade  = (document.getElementById('ccValidTab')  ? document.getElementById('ccValidTab').value  : '').trim();
+            var cvv       = (document.getElementById('ccCvvTab')    ? document.getElementById('ccCvvTab').value    : '').trim();
+            var cpf       = (document.getElementById('ccCpfTab')    ? document.getElementById('ccCpfTab').value    : '').replace(/\D/g,'');
+            // Validações básicas
+            if (!numRaw || numRaw.length < 13) { if(msg) { msg.style.color='#f87171'; msg.textContent='❌ Número do cartão inválido.'; } return; }
+            if (!nome)                          { if(msg) { msg.style.color='#f87171'; msg.textContent='❌ Informe o nome do titular.'; } return; }
+            var parts = validade.split('/');
+            if (parts.length !== 2 || parts[0].length !== 2 || parts[1].length !== 2) { if(msg) { msg.style.color='#f87171'; msg.textContent='❌ Validade inválida (MM/AA).'; } return; }
+            if (!cvv || cvv.length < 3)         { if(msg) { msg.style.color='#f87171'; msg.textContent='❌ CVV inválido.'; } return; }
+            if (!cpf || cpf.length !== 11)      { if(msg) { msg.style.color='#f87171'; msg.textContent='❌ CPF inválido (11 dígitos).'; } return; }
+            var expiryMonth = parts[0];
+            var expiryYear  = '20' + parts[1];
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Processando...'; }
+            if (msg) msg.textContent = '';
+            try {
+                var result = await secureFetch('salvarCartaoMP', {
+                    email: currentUser.email,
+                    cardNumber: numRaw, cardHolder: nome,
+                    expiryMonth: expiryMonth, expiryYear: expiryYear,
+                    cvv: cvv, cpf: cpf
+                });
+                if (result.success) {
+                    if (msg) { msg.style.color = '#4ade80'; msg.textContent = '✅ ' + (result.message || 'Cartão cadastrado! Cobrança recorrente ativada.'); }
+                    if (btn) { btn.textContent = '✅ Ativado'; }
+                    setTimeout(function() { loadPagamentosTab(); }, 2000);
+                } else {
+                    if (msg) { msg.style.color = '#f87171'; msg.textContent = '❌ ' + (result.message || 'Erro ao cadastrar cartão.'); }
+                    if (btn) { btn.disabled = false; btn.textContent = '💳 Ativar Cobrança Recorrente'; }
+                }
+            } catch(e) {
+                if (msg) { msg.style.color = '#f87171'; msg.textContent = '❌ Erro de conexão. Tente novamente.'; }
+                if (btn) { btn.disabled = false; btn.textContent = '💳 Ativar Cobrança Recorrente'; }
             }
         }
 
@@ -11528,17 +11699,50 @@
             // Bloco de pagamento (só se tiver plano e precisar pagar)
             var devePagar = (status === 'pendente' || status === 'atrasado' || status === 'vencendo' || status === 'inativo') && !semPlano;
             if (devePagar) {
+                var isMercadoPagoPerfil = (data.gateway === 'mercadopago');
                 h += '<div class="pag-card">';
-                h += '<div class="pag-card-title" style="margin-bottom:10px;">💰 Pagar via PIX</div>';
+                h += '<div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.6px;margin-bottom:10px;">FORMA DE PAGAMENTO</div>';
                 h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">';
                 h += '<div style="font-size:12px;color:var(--text-3);">Valor a pagar:</div>';
                 h += '<div style="font-size:22px;font-weight:900;color:#C9A23A;">' + (plano.valor ? 'R$ ' + parseFloat(plano.valor).toFixed(2) : '—') + '</div>';
                 h += '</div>';
 
                 if (temGateway) {
+                    // Tabs PIX / Cartão (somente Mercado Pago)
+                    if (isMercadoPagoPerfil) {
+                        h += '<div style="display:flex;gap:8px;margin-bottom:14px;">';
+                        h += '<button id="tabBtnPix" onclick="alternarFormaPag(\'pix\')" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(201,162,58,0.6);background:rgba(201,162,58,0.15);color:#C9A23A;">🟢 PIX</button>';
+                        h += '<button id="tabBtnCartao" onclick="alternarFormaPag(\'cartao\')" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text-3);">💳 Cartão</button>';
+                        h += '</div>';
+                    }
+                    // Painel PIX
+                    h += '<div id="painelPix">';
                     h += '<button id="btnGerarPix" onclick="gerarPixDinamico()" style="width:100%;padding:12px;background:linear-gradient(135deg,#C9A23A,#F8E7A1 55%,#8C6A0A);color:#0D0B08;font-weight:800;border:none;border-radius:12px;font-size:13px;cursor:pointer;margin-bottom:8px;">🟢 Gerar QR Code PIX</button>';
                     h += '<div id="pixDinamicoContainer" style="margin-top:4px;"></div>';
                     h += '<div style="font-size:10px;color:var(--text-3);text-align:center;line-height:1.5;margin-top:8px;">' + (gwLabel[data.gateway] || data.gateway) + ' · Confirmado automaticamente</div>';
+                    h += '</div>';
+                    // Painel Cartão (MP only)
+                    if (isMercadoPagoPerfil) {
+                        h += '<div id="painelCartao" style="display:none;">';
+                        h += '<div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:14px;">';
+                        h += '<div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.5px;margin-bottom:10px;">💳 CADASTRAR CARTÃO — COBRANÇA RECORRENTE</div>';
+                        h += '<div style="font-size:11px;color:var(--text-2);margin-bottom:12px;line-height:1.5;background:rgba(201,162,58,0.06);border-radius:8px;padding:8px 10px;">Ao cadastrar, sua mensalidade será cobrada automaticamente todo mês no cartão.</div>';
+                        h += '<div style="margin-bottom:10px;"><label style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;display:block;margin-bottom:4px;">NÚMERO DO CARTÃO</label>';
+                        h += '<input id="ccNum" type="tel" inputmode="numeric" maxlength="19" placeholder="0000 0000 0000 0000" oninput="formatarCartao(this)" style="width:100%;padding:11px 12px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:10px;color:var(--text-1);font-size:15px;font-weight:700;letter-spacing:2px;"></div>';
+                        h += '<div style="margin-bottom:10px;"><label style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;display:block;margin-bottom:4px;">NOME (como no cartão)</label>';
+                        h += '<input id="ccNome" type="text" placeholder="NOME SOBRENOME" style="width:100%;padding:11px 12px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;" oninput="this.value=this.value.toUpperCase()"></div>';
+                        h += '<div style="display:flex;gap:8px;margin-bottom:10px;">';
+                        h += '<div style="flex:1;"><label style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;display:block;margin-bottom:4px;">VALIDADE</label>';
+                        h += '<input id="ccValid" type="tel" inputmode="numeric" maxlength="5" placeholder="MM/AA" oninput="formatarValidade(this)" style="width:100%;padding:11px 12px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;font-weight:700;"></div>';
+                        h += '<div style="flex:1;"><label style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;display:block;margin-bottom:4px;">CVV</label>';
+                        h += '<input id="ccCvv" type="tel" inputmode="numeric" maxlength="4" placeholder="000" style="width:100%;padding:11px 12px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;font-weight:700;"></div>';
+                        h += '</div>';
+                        h += '<div style="margin-bottom:14px;"><label style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;display:block;margin-bottom:4px;">CPF DO TITULAR</label>';
+                        h += '<input id="ccCpf" type="tel" inputmode="numeric" maxlength="14" placeholder="000.000.000-00" oninput="formatarCpf(this)" style="width:100%;padding:11px 12px;background:var(--bg-elevated);border:1.5px solid var(--border);border-radius:10px;color:var(--text-1);font-size:13px;"></div>';
+                        h += '<button id="btnSalvarCartao" onclick="salvarCartaoMP()" style="width:100%;padding:14px;background:linear-gradient(135deg,#1a56db,#3b82f6);color:#fff;font-weight:800;border:none;border-radius:12px;font-size:14px;cursor:pointer;margin-bottom:6px;">💳 Ativar Cobrança Recorrente</button>';
+                        h += '<div id="cartaoMsg" style="font-size:11px;text-align:center;min-height:16px;margin-top:4px;"></div>';
+                        h += '</div></div>';
+                    }
                 } else if (data.chavePix) {
                     h += '<div style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.5px;margin-bottom:6px;">CHAVE PIX</div>';
                     h += '<div id="pixChaveEl" data-chave="' + escapeHtml(data.chavePix||'') + '" onclick="copiarChavePixEl(this,\'pixCopiadoMsg\')" style="background:var(--bg-elevated);border:1.5px dashed rgba(201,162,58,0.55);border-radius:12px;padding:14px 16px;font-size:14px;font-weight:800;color:#C9A23A;cursor:pointer;word-break:break-all;text-align:center;margin-bottom:6px;">' + escapeHtml(data.chavePix||'—') + '</div>';
@@ -11601,6 +11805,74 @@
             } catch(e) {
                 if (btn) { btn.disabled = false; btn.textContent = '🟢 Gerar QR Code PIX'; }
                 alert('Erro de conexão.');
+            }
+        }
+
+        // ── Alterna PIX / Cartão no painel de perfil ─────────────
+        function alternarFormaPag(tipo) {
+            var pp = document.getElementById('painelPix');
+            var pc = document.getElementById('painelCartao');
+            var bp = document.getElementById('tabBtnPix');
+            var bc = document.getElementById('tabBtnCartao');
+            if (tipo === 'pix') {
+                if (pp) pp.style.display = '';
+                if (pc) pc.style.display = 'none';
+                if (bp) { bp.style.background = 'rgba(201,162,58,0.15)'; bp.style.borderColor = 'rgba(201,162,58,0.6)'; bp.style.color = '#C9A23A'; }
+                if (bc) { bc.style.background = 'transparent'; bc.style.borderColor = 'var(--border)'; bc.style.color = 'var(--text-3)'; }
+            } else {
+                if (pp) pp.style.display = 'none';
+                if (pc) pc.style.display = '';
+                if (bc) { bc.style.background = 'rgba(59,130,246,0.15)'; bc.style.borderColor = 'rgba(59,130,246,0.6)'; bc.style.color = '#60a5fa'; }
+                if (bp) { bp.style.background = 'transparent'; bp.style.borderColor = 'var(--border)'; bp.style.color = 'var(--text-3)'; }
+            }
+        }
+        function formatarCartao(input) {
+            var v = input.value.replace(/\D/g,'').slice(0,16);
+            input.value = v.replace(/(.{4})/g,'$1 ').trim();
+        }
+        function formatarValidade(input) {
+            var v = input.value.replace(/\D/g,'').slice(0,4);
+            if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
+            input.value = v;
+        }
+        function formatarCpf(input) {
+            var v = input.value.replace(/\D/g,'').slice(0,11);
+            v = v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+            input.value = v;
+        }
+        async function salvarCartaoMP() {
+            var btn = document.getElementById('btnSalvarCartao');
+            var msg = document.getElementById('cartaoMsg');
+            var numRaw   = (document.getElementById('ccNum')   ? document.getElementById('ccNum').value   : '').replace(/\s/g,'');
+            var nome     = (document.getElementById('ccNome')  ? document.getElementById('ccNome').value  : '').trim().toUpperCase();
+            var validade = (document.getElementById('ccValid') ? document.getElementById('ccValid').value : '').trim();
+            var cvv      = (document.getElementById('ccCvv')   ? document.getElementById('ccCvv').value   : '').trim();
+            var cpf      = (document.getElementById('ccCpf')   ? document.getElementById('ccCpf').value   : '').replace(/\D/g,'');
+            if (!numRaw || numRaw.length < 13) { if(msg){msg.style.color='#f87171';msg.textContent='❌ Número do cartão inválido.';}return; }
+            if (!nome)                          { if(msg){msg.style.color='#f87171';msg.textContent='❌ Informe o nome do titular.';}return; }
+            var parts = validade.split('/');
+            if (parts.length !== 2 || parts[0].length !== 2 || parts[1].length !== 2) { if(msg){msg.style.color='#f87171';msg.textContent='❌ Validade inválida (MM/AA).';}return; }
+            if (!cvv || cvv.length < 3)         { if(msg){msg.style.color='#f87171';msg.textContent='❌ CVV inválido.';}return; }
+            if (!cpf || cpf.length !== 11)      { if(msg){msg.style.color='#f87171';msg.textContent='❌ CPF inválido (11 dígitos).';}return; }
+            var expiryMonth = parts[0]; var expiryYear = '20' + parts[1];
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Processando...'; }
+            if (msg) msg.textContent = '';
+            try {
+                var result = await secureFetch('salvarCartaoMP', {
+                    email: currentUser.email, cardNumber: numRaw, cardHolder: nome,
+                    expiryMonth: expiryMonth, expiryYear: expiryYear, cvv: cvv, cpf: cpf
+                });
+                if (result.success) {
+                    if (msg) { msg.style.color='#4ade80'; msg.textContent='✅ ' + (result.message || 'Cartão cadastrado! Cobrança recorrente ativada.'); }
+                    if (btn) btn.textContent = '✅ Ativado';
+                    setTimeout(function(){ loadPagamentos(); if(document.getElementById('pagTabContainer')) loadPagamentosTab(); }, 2000);
+                } else {
+                    if (msg) { msg.style.color='#f87171'; msg.textContent='❌ ' + (result.message || 'Erro ao cadastrar cartão.'); }
+                    if (btn) { btn.disabled = false; btn.textContent = '💳 Ativar Cobrança Recorrente'; }
+                }
+            } catch(e) {
+                if (msg) { msg.style.color='#f87171'; msg.textContent='❌ Erro de conexão.'; }
+                if (btn) { btn.disabled = false; btn.textContent = '💳 Ativar Cobrança Recorrente'; }
             }
         }
 
@@ -14470,11 +14742,13 @@
                     }
                 } catch(pe) { /* ignora — faz o registro direto */ }
 
-                var payload = pendingRowIndex
-                    ? { rowIndex: pendingRowIndex }
-                    : { alunoEmail: email, tipo: 'grau', faixa: faixa, grau: novoGrau };
+                if (!pendingRowIndex) {
+                    alert('Nenhuma solicitação pendente deste aluno. Peça para o aluno registrar a graduação no app primeiro.');
+                    if (btn) { btn.disabled = false; btn.textContent = '✅ Aprovar Graduação Atual'; }
+                    return;
+                }
 
-                var data = await secureFetch('addGraduacao', payload);
+                var data = await secureFetch('addGraduacao', { rowIndex: pendingRowIndex });
                 if (data.success) {
                     // Toast de confirmação
                     var toast = document.createElement('div');
@@ -20140,19 +20414,7 @@
                     h += '<div style="font-size:10px;color:var(--adm-text-3);">' + icon + ' ' + escapeHtml(p.ct||'—');
                     if (p.planoNome) h += ' · <strong style="color:var(--adm-text-2);">' + escapeHtml(p.planoNome) + '</strong> — R$ ' + parseFloat(p.planoValor||0).toFixed(2);
                     else h += ' · <span style="color:#f87171;">sem plano</span>';
-                    if (p.vencimento) {
-                        // Limpa string longa de Date (ex: "Sun May 10 2026 00:00:00 GMT-0300...")
-                        var vencExib = p.vencimento;
-                        if (vencExib.length > 15) {
-                            try {
-                                var dv = new Date(vencExib);
-                                if (!isNaN(dv.getTime())) {
-                                    vencExib = ('0'+dv.getDate()).slice(-2) + '/' + ('0'+(dv.getMonth()+1)).slice(-2) + '/' + dv.getFullYear();
-                                }
-                            } catch(e) {}
-                        }
-                        h += ' · 📅 ' + escapeHtml(vencExib);
-                    }
+                    if (p.vencimento) h += ' · 📅 ' + escapeHtml(p.vencimento);
                     h += '</div></div>';
                     h += '<span style="flex-shrink:0;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:700;background:' + bg + ';color:' + cor + ';border:1px solid ' + cor + '33;">' + lbl + '</span>';
                     h += '</div>';
@@ -20161,7 +20423,6 @@
                     h += '<div style="display:flex;gap:5px;flex-wrap:wrap;">';
                     if (st !== 'PAGO') {
                         h += '<button onclick="confirmarPagtoManual(\'' + escapeHtml(p.email) + '\')" style="padding:4px 10px;border-radius:7px;background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.25);font-size:9px;font-weight:700;cursor:pointer;">✅ Confirmar pago</button>';
-                        h += '<button onclick="sincronizarStatusMP(\'' + escapeHtml(p.email) + '\',this)" style="padding:4px 10px;border-radius:7px;background:rgba(59,130,246,0.1);color:#60a5fa;border:1px solid rgba(59,130,246,0.25);font-size:9px;font-weight:700;cursor:pointer;">🔄 Verificar MP</button>';
                     }
                     h += '<button onclick="atribuirPlanoModal(\'' + escapeHtml(p.email) + '\')" style="padding:4px 10px;border-radius:7px;background:rgba(201,162,58,0.08);color:var(--adm-primary);border:1px solid rgba(201,162,58,0.2);font-size:9px;font-weight:700;cursor:pointer;">📋 Atribuir plano</button>';
                     h += '</div>';
@@ -20181,29 +20442,6 @@
                 if (data.success) { loadPagamentosAdmin(); }
                 else alert('❌ ' + data.message);
             } catch(e) { alert('Erro de conexão'); }
-        }
-
-        // Consulta o gateway (Mercado Pago) e atualiza o status automaticamente
-        async function sincronizarStatusMP(email, btn) {
-            if (btn) { btn.disabled = true; btn.textContent = '⏳...'; }
-            try {
-                var data = await secureFetch('sincronizarPagamento', { email: email });
-                if (data.success) {
-                    if (data.status === 'PAGO') {
-                        if (btn) { btn.textContent = '✅ Pago!'; btn.style.color = '#4ade80'; }
-                        setTimeout(loadPagamentosAdmin, 1500);
-                    } else {
-                        if (btn) { btn.disabled = false; btn.textContent = '🔄 Verificar MP'; }
-                        alert('Status no gateway: ' + (data.status || 'PENDENTE') + '\n\nO pagamento ainda não foi confirmado pelo Mercado Pago.');
-                    }
-                } else {
-                    if (btn) { btn.disabled = false; btn.textContent = '🔄 Verificar MP'; }
-                    alert('❌ ' + (data.message || 'Erro ao verificar'));
-                }
-            } catch(e) {
-                if (btn) { btn.disabled = false; btn.textContent = '🔄 Verificar MP'; }
-                alert('Erro de conexão');
-            }
         }
 
         function atribuirPlanoModal(email) {
