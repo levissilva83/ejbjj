@@ -5976,56 +5976,36 @@
                                     <span class="evo-declare-toggle" id="evoDeclareToggle">▸</span>
                                 </div>
                                 <div class="evo-declare-form" id="evoDeclareForm" style="display:none;">
-
-                                    <!-- Passo 1: Sim ou Não -->
-                                    <div id="evoDeclStepNao" style="display:block;">
-                                        <div class="evo-declare-hint">Se nunca treinou antes, sua faixa é Branca e será registrada automaticamente.</div>
-                                        <div class="evo-declare-row" style="gap:10px;margin-top:8px;">
-                                            <button class="evo-declare-btn" style="flex:1;background:rgba(34,197,94,0.15);color:#22C55E;border:1px solid rgba(34,197,94,0.3);" onclick="confirmarFaixaBranca()">
-                                                ⬜ Não, sou Faixa Branca
-                                            </button>
-                                            <button class="evo-declare-btn" style="flex:1;" onclick="mostrarFormDeclare()">
-                                                🥋 Sim, tenho histórico
-                                            </button>
-                                        </div>
+                                    <div class="evo-declare-hint">Informe seu histórico. O professor irá validar.</div>
+                                    <div class="evo-declare-row">
+                                        <select id="evoDeclTipo" onchange="onEvoDeclTipoChange()">
+                                            <option value="grau">🏅 Grau</option>
+                                            <option value="faixa">🥋 Faixa</option>
+                                        </select>
+                                        <select id="evoDeclFaixa" onchange="updateGrauOptions('evoDeclFaixa','evoDeclGrau')">
+                                            <option value="Branca">Branca</option>
+                                            <option value="Cinza">Cinza</option>
+                                            <option value="Amarela">Amarela</option>
+                                            <option value="Laranja">Laranja</option>
+                                            <option value="Verde">Verde</option>
+                                            <option value="Azul">Azul</option>
+                                            <option value="Roxa">Roxa</option>
+                                            <option value="Marrom">Marrom</option>
+                                            <option value="Preta">Preta</option>
+                                        </select>
+                                        <select id="evoDeclGrau">
+                                            <option value="0">0º Grau</option>
+                                            <option value="1">1º Grau</option>
+                                            <option value="2">2º Grau</option>
+                                            <option value="3">3º Grau</option>
+                                            <option value="4">4º Grau</option>
+                                        </select>
                                     </div>
-
-                                    <!-- Passo 2: formulário de histórico (Sim) -->
-                                    <div id="evoDeclStepSim" style="display:none;">
-                                        <div class="evo-declare-hint">Informe seu histórico. O professor irá validar.</div>
-                                        <div class="evo-declare-row">
-                                            <select id="evoDeclTipo" onchange="onEvoDeclTipoChange()">
-                                                <option value="faixa">🥋 Faixa</option>
-                                                <option value="grau">🏅 Grau na faixa</option>
-                                            </select>
-                                            <select id="evoDeclFaixa" onchange="updateGrauOptions('evoDeclFaixa','evoDeclGrau')">
-                                                <option value="Azul">Azul</option>
-                                                <option value="Roxa">Roxa</option>
-                                                <option value="Marrom">Marrom</option>
-                                                <option value="Preta">Preta</option>
-                                                <option value="Cinza">Cinza</option>
-                                                <option value="Amarela">Amarela</option>
-                                                <option value="Laranja">Laranja</option>
-                                                <option value="Verde">Verde</option>
-                                                <option value="Branca">Branca c/ Grau</option>
-                                            </select>
-                                            <select id="evoDeclGrau" style="display:none;">
-                                                <option value="1">1º Grau</option>
-                                                <option value="2">2º Grau</option>
-                                                <option value="3">3º Grau</option>
-                                                <option value="4">4º Grau</option>
-                                            </select>
-                                        </div>
-                                        <div class="evo-declare-row">
-                                            <input type="date" id="evoDeclData" class="evo-inicio-input" style="flex:1;" placeholder="Data aproximada">
-                                            <button class="evo-declare-btn" onclick="requestGraduacao()">Enviar</button>
-                                        </div>
-                                        <div style="margin-top:6px;">
-                                            <span style="font-size:11px;color:var(--text-3);cursor:pointer;text-decoration:underline;" onclick="voltarParaNaoSim()">← Voltar</span>
-                                        </div>
-                                        <div id="evoDeclMsg" style="font-size:11px;color:var(--text-3);margin-top:4px;"></div>
+                                    <div class="evo-declare-row">
+                                        <input type="date" id="evoDeclData" class="evo-inicio-input" style="flex:1;">
+                                        <button class="evo-declare-btn" onclick="requestGraduacao()">Enviar</button>
                                     </div>
-
+                                    <div id="evoDeclMsg" style="font-size:11px;color:var(--text-3);margin-top:4px;"></div>
                                 </div>
                             </div>
 
@@ -8462,7 +8442,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzB33Q0vGlvxMgcSYrl3aduUmECKazHTo617XmxqZdO4--mpluqsWcmR5rHzp2EcqpCTg/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxWfChzypcDk8UIi0-gmD7S9_gc0slc8D_WK6JURUOxv--vWeKa1hA1P24wgSOfIAWwkA/exec';
 
         // ===== PWA INSTALL PROMPT =====
         (function() {
@@ -10993,113 +10973,39 @@
         // ===== STUDENT GRADUATION TIMELINE =====
 
         function toggleDeclareForm() {
-            var form   = document.getElementById('evoDeclareForm');
+            var form = document.getElementById('evoDeclareForm');
             var toggle = document.getElementById('evoDeclareToggle');
             if (!form) return;
             var open = form.style.display !== 'none';
-            if (!open) {
-                // Ao abrir, sempre mostra o passo Sim/Não primeiro
-                form.style.display = 'block';
-                voltarParaNaoSim();
-            } else {
-                form.style.display = 'none';
-            }
-            if (toggle) toggle.classList.toggle('open', form.style.display !== 'none');
-        }
-
-        function mostrarFormDeclare() {
-            document.getElementById('evoDeclStepNao').style.display = 'none';
-            document.getElementById('evoDeclStepSim').style.display = 'block';
-            // Garante estado inicial correto
-            onEvoDeclTipoChange();
-        }
-
-        function voltarParaNaoSim() {
-            document.getElementById('evoDeclStepNao').style.display = 'block';
-            document.getElementById('evoDeclStepSim').style.display = 'none';
-            var msg = document.getElementById('evoDeclMsg');
-            if (msg) msg.textContent = '';
-        }
-
-        // Usuário confirma que é Faixa Branca — registra automaticamente APROVADO
-        async function confirmarFaixaBranca() {
-            var btn = document.querySelector('#evoDeclStepNao .evo-declare-btn');
-            if (btn) { btn.disabled = true; btn.textContent = '⏳ Registrando...'; }
-            try {
-                // Usa a data de início da jornada já salva; se não tiver, usa hoje
-                var inicioInput = document.getElementById('evoInicioDate');
-                var dataInicio  = (inicioInput && inicioInput.value) ? inicioInput.value : new Date().toISOString().split('T')[0];
-
-                // Registra Faixa Branca como APROVADO diretamente (início da jornada)
-                var result = await secureFetch('setMyInicioBJJ', { data: dataInicio });
-                if (result.success) {
-                    // Fecha o painel e atualiza a timeline
-                    document.getElementById('evoDeclareForm').style.display = 'none';
-                    var toggle = document.getElementById('evoDeclareToggle');
-                    if (toggle) toggle.classList.remove('open');
-                    loadMyGraduacoes();
-                    // Feedback visual
-                    var box = document.getElementById('evoDeclareBox');
-                    if (box) {
-                        box.style.border = '1px solid rgba(34,197,94,0.4)';
-                        setTimeout(function(){ box.style.border = ''; }, 2000);
-                    }
-                } else {
-                    alert(result.message || 'Erro ao registrar');
-                    if (btn) { btn.disabled = false; btn.textContent = '⬜ Não, sou Faixa Branca'; }
-                }
-            } catch(e) {
-                alert('Erro de conexão');
-                if (btn) { btn.disabled = false; btn.textContent = '⬜ Não, sou Faixa Branca'; }
-            }
+            form.style.display = open ? 'none' : 'block';
+            if (toggle) toggle.classList.toggle('open', !open);
         }
 
         function onEvoDeclTipoChange() {
-            var tipo  = document.getElementById('evoDeclTipo').value;
-            var grau  = document.getElementById('evoDeclGrau');
-            var faixa = document.getElementById('evoDeclFaixa');
-            if (!grau || !faixa) return;
-            // Grau só aparece quando tipo=grau
-            grau.style.display = (tipo === 'grau') ? '' : 'none';
-            // Quando tipo=faixa, remove Branca do select (Branca c/ Grau ainda é opção em tipo=grau)
-            if (tipo === 'faixa') {
-                // Desabilita a opção "Branca c/ Grau" pois não faz sentido para tipo faixa
-                for (var i = 0; i < faixa.options.length; i++) {
-                    if (faixa.options[i].value === 'Branca') {
-                        faixa.options[i].style.display = 'none';
-                        if (faixa.value === 'Branca') faixa.value = 'Azul';
-                    }
-                }
-            } else {
-                for (var j = 0; j < faixa.options.length; j++) {
-                    faixa.options[j].style.display = '';
-                }
-            }
+            var tipo = document.getElementById('evoDeclTipo').value;
+            document.getElementById('evoDeclGrau').style.display = (tipo === 'grau') ? '' : 'none';
         }
 
         async function requestGraduacao() {
-            var tipo  = document.getElementById('evoDeclTipo').value;
-            var data  = document.getElementById('evoDeclData').value;
-            var faixa = document.getElementById('evoDeclFaixa').value;
-            var grau  = document.getElementById('evoDeclGrau').value;
-            var msg   = document.getElementById('evoDeclMsg');
+            var tipo = document.getElementById('evoDeclTipo').value;
+            var data = document.getElementById('evoDeclData').value;
+            if (!data) { alert('Informe a data'); return; }
 
-            // Data é opcional — se não informou, usa hoje
-            if (!data) data = new Date().toISOString().split('T')[0];
+            var payload = {
+                tipo: tipo,
+                faixa: document.getElementById('evoDeclFaixa').value,
+                grau: document.getElementById('evoDeclGrau').value,
+                data: data,
+                obs: ''
+            };
 
-            // Se tipo=faixa e faixa=Branca, orienta a usar o botão correto
-            if (tipo === 'faixa' && faixa === 'Branca') {
-                if (msg) { msg.style.color = 'var(--coral)'; msg.textContent = 'Para Faixa Branca use o botão "Não, sou Faixa Branca"'; }
-                return;
-            }
-
-            var payload = { tipo: tipo, faixa: faixa, grau: grau, data: data, obs: '' };
-            if (msg) { msg.style.color = 'var(--text-3)'; msg.textContent = 'Enviando...'; }
+            var msg = document.getElementById('evoDeclMsg');
+            if (msg) msg.textContent = 'Enviando...';
 
             try {
                 var result = await secureFetch('requestGraduacao', payload);
                 if (result.success) {
-                    if (msg) { msg.style.color = '#22C55E'; msg.textContent = '✅ Solicitação enviada! Aguarde aprovação do professor.'; }
+                    if (msg) { msg.style.color = '#22C55E'; msg.textContent = '✅ Solicitação enviada! Aguarde aprovação.'; }
                     document.getElementById('evoDeclData').value = '';
                     loadMyGraduacoes();
                 } else {
@@ -20234,7 +20140,19 @@
                     h += '<div style="font-size:10px;color:var(--adm-text-3);">' + icon + ' ' + escapeHtml(p.ct||'—');
                     if (p.planoNome) h += ' · <strong style="color:var(--adm-text-2);">' + escapeHtml(p.planoNome) + '</strong> — R$ ' + parseFloat(p.planoValor||0).toFixed(2);
                     else h += ' · <span style="color:#f87171;">sem plano</span>';
-                    if (p.vencimento) h += ' · 📅 ' + escapeHtml(p.vencimento);
+                    if (p.vencimento) {
+                        // Limpa string longa de Date (ex: "Sun May 10 2026 00:00:00 GMT-0300...")
+                        var vencExib = p.vencimento;
+                        if (vencExib.length > 15) {
+                            try {
+                                var dv = new Date(vencExib);
+                                if (!isNaN(dv.getTime())) {
+                                    vencExib = ('0'+dv.getDate()).slice(-2) + '/' + ('0'+(dv.getMonth()+1)).slice(-2) + '/' + dv.getFullYear();
+                                }
+                            } catch(e) {}
+                        }
+                        h += ' · 📅 ' + escapeHtml(vencExib);
+                    }
                     h += '</div></div>';
                     h += '<span style="flex-shrink:0;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:700;background:' + bg + ';color:' + cor + ';border:1px solid ' + cor + '33;">' + lbl + '</span>';
                     h += '</div>';
@@ -20243,6 +20161,7 @@
                     h += '<div style="display:flex;gap:5px;flex-wrap:wrap;">';
                     if (st !== 'PAGO') {
                         h += '<button onclick="confirmarPagtoManual(\'' + escapeHtml(p.email) + '\')" style="padding:4px 10px;border-radius:7px;background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.25);font-size:9px;font-weight:700;cursor:pointer;">✅ Confirmar pago</button>';
+                        h += '<button onclick="sincronizarStatusMP(\'' + escapeHtml(p.email) + '\',this)" style="padding:4px 10px;border-radius:7px;background:rgba(59,130,246,0.1);color:#60a5fa;border:1px solid rgba(59,130,246,0.25);font-size:9px;font-weight:700;cursor:pointer;">🔄 Verificar MP</button>';
                     }
                     h += '<button onclick="atribuirPlanoModal(\'' + escapeHtml(p.email) + '\')" style="padding:4px 10px;border-radius:7px;background:rgba(201,162,58,0.08);color:var(--adm-primary);border:1px solid rgba(201,162,58,0.2);font-size:9px;font-weight:700;cursor:pointer;">📋 Atribuir plano</button>';
                     h += '</div>';
@@ -20262,6 +20181,29 @@
                 if (data.success) { loadPagamentosAdmin(); }
                 else alert('❌ ' + data.message);
             } catch(e) { alert('Erro de conexão'); }
+        }
+
+        // Consulta o gateway (Mercado Pago) e atualiza o status automaticamente
+        async function sincronizarStatusMP(email, btn) {
+            if (btn) { btn.disabled = true; btn.textContent = '⏳...'; }
+            try {
+                var data = await secureFetch('sincronizarPagamento', { email: email });
+                if (data.success) {
+                    if (data.status === 'PAGO') {
+                        if (btn) { btn.textContent = '✅ Pago!'; btn.style.color = '#4ade80'; }
+                        setTimeout(loadPagamentosAdmin, 1500);
+                    } else {
+                        if (btn) { btn.disabled = false; btn.textContent = '🔄 Verificar MP'; }
+                        alert('Status no gateway: ' + (data.status || 'PENDENTE') + '\n\nO pagamento ainda não foi confirmado pelo Mercado Pago.');
+                    }
+                } else {
+                    if (btn) { btn.disabled = false; btn.textContent = '🔄 Verificar MP'; }
+                    alert('❌ ' + (data.message || 'Erro ao verificar'));
+                }
+            } catch(e) {
+                if (btn) { btn.disabled = false; btn.textContent = '🔄 Verificar MP'; }
+                alert('Erro de conexão');
+            }
         }
 
         function atribuirPlanoModal(email) {
