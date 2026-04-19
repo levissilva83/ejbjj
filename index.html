@@ -5992,7 +5992,7 @@
 
                                     <!-- Passo 2: formulário de histórico (Sim) -->
                                     <div id="evoDeclStepSim" style="display:none;">
-                                        <div class="evo-declare-hint">Informe seu histórico. O professor irá validar.</div>
+                                        <div class="evo-declare-hint">Informe seu histórico. A data que você declarar será registrada na sua jornada.</div>
                                         <div class="evo-declare-row">
                                             <select id="evoDeclTipo" onchange="onEvoDeclTipoChange()">
                                                 <option value="faixa">🥋 Faixa</option>
@@ -8298,7 +8298,7 @@
                 <div class="stu-section">
                     <div class="stu-section-title">🏆 Linha do Tempo · Graduação</div>
                     <div style="font-size:11px;color:var(--text-3);margin-bottom:8px;padding:6px 10px;background:rgba(255,255,255,0.04);border-radius:8px;">
-                        ℹ️ O aluno declarou as datas abaixo. Confirme se as datas registradas estão corretas.
+                        ℹ️ Datas declaradas pelo aluno e registradas automaticamente. Edite se precisar corrigir alguma data.
                     </div>
                     <div id="gradTimeline" class="grad-timeline">
                         <div class="grad-empty">Nenhum evento registrado</div>
@@ -8427,7 +8427,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyr6iq8GSFg0suPQZ0jjV_2eAhAbvIkKmhuA2m9eSUCQIj3HdObcjuCk9AXXhW0tfoapA/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzB-uCheFv3FFqgtxBjPDyImXIYIJHqcWJCfTQin81jwzLO7e_kzPXNGZSDuhUq1xg8wQ/exec';
 
         // ===== PWA INSTALL PROMPT =====
         (function() {
@@ -10910,21 +10910,13 @@
                     title = 'Graduação: Faixa ' + ev.faixa; icon = (FAIXA_EMOJI[ev.faixa] || '🥋');
                 }
 
-                var statusBadge = isPending 
-                    ? '<span class="grad-status pendente">📅 AGUARD. CONFIRMAÇÃO</span>'
-                    : '<span class="grad-status aprovado">✅ DATA CONFIRMADA</span>';
+                var statusBadge = '<span class="grad-status aprovado">✅ DATA REGISTRADA</span>';
 
                 html += '<div class="' + cls + '">';
                 var dataLabel = ev.data ? '📅 ' + formatGradDate(ev.data) + ' <span style="font-size:10px;color:var(--text-3)">(declarada pelo aluno)</span>' : '📅 —';
                 html += '<div class="grad-date">' + dataLabel + ' ' + statusBadge + '</div>';
                 html += '<div class="grad-title">' + icon + ' ' + title + '</div>';
                 if (ev.obs) html += '<div class="grad-obs">"' + escapeHtml(ev.obs) + '"</div>';
-
-                if (isPending && ev.rowIndex) {
-                    html += '<div class="grad-actions">';
-                    html += '<button class="grad-action-btn approve" onclick="approveGraduacaoRow(' + ev.rowIndex + ')">✅ Confirmar data declarada</button>';
-                    html += '</div>';
-                }
                 html += '</div>';
             }
             container.innerHTML = html;
@@ -11031,7 +11023,7 @@
             try {
                 var result = await secureFetch('requestGraduacao', payload);
                 if (result.success) {
-                    if (msg) { msg.style.color = '#22C55E'; msg.textContent = '✅ Data registrada! O professor irá confirmar na jornada.'; }
+                    if (msg) { msg.style.color = '#22C55E'; msg.textContent = '✅ Registrado! Já aparece na sua jornada.'; }
                     document.getElementById('evoDeclData').value = '';
                     loadMyGraduacoes();
                 } else {
@@ -11196,7 +11188,7 @@
                     icon = FAIXA_ICON[faixa] || '🥋';
                     bulletColor = FAIXA_COR[faixa] || '#8b5cf6';
                     title = 'Faixa ' + faixa;
-                    sub = isPending ? 'Data registrada · Aguardando confirmação do professor' : 'Promovido à faixa ' + faixa;
+                    sub = 'Promovido à faixa ' + faixa;
                 } else if (ev.tipo === 'grau') {
                     var grauNum = parseInt(ev.grau) || 0;
                     var dots = '';
@@ -11205,15 +11197,13 @@
                     icon = '<span style="font-size:12px;letter-spacing:1px;">' + dots + '</span>';
                     bulletColor = FAIXA_COR[faixa] || '#fbbf24';
                     title = grauNum + 'º Grau · Faixa ' + faixa;
-                    sub = isPending ? 'Data registrada · Aguardando confirmação do professor' : 'Grau recebido na faixa ' + faixa;
+                    sub = 'Grau recebido na faixa ' + faixa;
                 } else if (ev.tipo === 'inicio') {
                     icon = '🥋'; bulletColor = '#22C55E';
                     title = 'Início da Jornada'; sub = 'Primeiro dia treinando BJJ';
                 }
 
-                var statusHtml = isPending
-                    ? '<div class="evo-tl-status pendente">📅 Aguardando confirmação</div>'
-                    : '<div class="evo-tl-status aprovado">✅ Data confirmada</div>';
+                var statusHtml = '<div class="evo-tl-status aprovado">✅ Data confirmada</div>';
                 var bulletStyle = bulletColor ? ' style="--bullet-color:' + bulletColor + ';"' : '';
 
                 html += '<div class="' + cardClass + '"' + bulletStyle + '>';
